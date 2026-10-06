@@ -80,50 +80,52 @@
         <div id="floating-text-container" class="absolute inset-0 pointer-events-none overflow-hidden z-10"></div>
     </main>
 
-    <!-- Start Screen with sticks.jpg Splash Background -->
-    <div id="start-screen" class="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 text-center overflow-y-auto" style="background: url('sticks.jpg'); background-size: cover; background-position: center;">
-        <div class="bg-slate-900/85 backdrop-blur-md p-5 rounded-3xl border border-cyan-500/30 shadow-2xl max-w-sm w-full my-auto">
-            <div class="w-14 h-14 bg-cyan-500/20 rounded-2xl mx-auto flex items-center justify-center mb-3 border border-cyan-400/40 shadow-inner">
-                <i class="fa-solid fa-wand-magic-sparkles text-2xl text-cyan-300"></i>
-            </div>
-            <h1 class="text-xl font-black text-cyan-100 tracking-wider mb-0.5">PICK-UP STICKS</h1>
-            <p class="text-[11px] text-cyan-300/80 mb-4 uppercase tracking-widest font-semibold">Custom Game Settings</p>
+    <!-- Start Screen with sticks.jpg Splash Background (shifted to bottom, start button moved up) -->
+    <div id="start-screen" class="absolute inset-0 z-30 flex flex-col items-center justify-end p-4 pb-8 text-center overflow-y-auto" style="background: url('sticks.jpg'); background-size: cover; background-position: center;">
+        <div class="bg-black/30 backdrop-blur-sm p-5 rounded-3xl border border-white/15 shadow-2xl max-w-sm w-full">
             
             <!-- Straw Width Selection (1, 2, 3) -->
             <div class="text-left mb-3">
-                <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wide block mb-1.5">Straw Width Size</label>
+                <label class="text-[11px] font-bold text-cyan-200 uppercase tracking-wide block mb-1.5 drop-shadow">Straw Width Size</label>
                 <div class="grid grid-cols-3 gap-2" id="width-selector">
-                    <div data-width="1" class="option-card selected bg-slate-800/90 border border-slate-700 py-2.5 px-2 rounded-xl text-center cursor-pointer">
+                    <div data-width="1" class="option-card selected bg-slate-900/60 border border-white/10 py-2.5 px-2 rounded-xl text-center cursor-pointer">
                         <span class="block font-black text-xs text-cyan-300">1</span>
-                        <span class="block text-[9px] text-slate-400">Thin</span>
+                        <span class="block text-[9px] text-slate-300">Thin</span>
                     </div>
-                    <div data-width="2" class="option-card bg-slate-800/90 border border-slate-700 py-2.5 px-2 rounded-xl text-center cursor-pointer">
+                    <div data-width="2" class="option-card bg-slate-900/60 border border-white/10 py-2.5 px-2 rounded-xl text-center cursor-pointer">
                         <span class="block font-black text-xs text-slate-200">2</span>
-                        <span class="block text-[9px] text-slate-400">Medium</span>
+                        <span class="block text-[9px] text-slate-300">Medium</span>
                     </div>
-                    <div data-width="3" class="option-card bg-slate-800/90 border border-slate-700 py-2.5 px-2 rounded-xl text-center cursor-pointer">
+                    <div data-width="3" class="option-card bg-slate-900/60 border border-white/10 py-2.5 px-2 rounded-xl text-center cursor-pointer">
                         <span class="block font-black text-xs text-slate-200">3</span>
-                        <span class="block text-[9px] text-slate-400">Wide</span>
+                        <span class="block text-[9px] text-slate-300">Wide</span>
                     </div>
                 </div>
             </div>
 
             <!-- Straw Color Mode Selection -->
             <div class="text-left mb-4">
-                <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wide block mb-1.5">Straw Color Scheme</label>
+                <label class="text-[11px] font-bold text-cyan-200 uppercase tracking-wide block mb-1.5 drop-shadow">Straw Color Scheme</label>
                 <div class="grid grid-cols-2 gap-2" id="color-selector">
-                    <div data-color="same" class="option-card selected bg-slate-800/90 border border-slate-700 p-2.5 rounded-xl text-center cursor-pointer">
+                    <div data-color="same" class="option-card selected bg-slate-900/60 border border-white/10 p-2.5 rounded-xl text-center cursor-pointer">
                         <span class="block font-bold text-xs text-cyan-300">All Same Color</span>
-                        <span class="block text-[9px] text-slate-400">Single tone pile</span>
+                        <span class="block text-[9px] text-slate-300">Single tone pile</span>
                     </div>
-                    <div data-color="multi" class="option-card bg-slate-800/90 border border-slate-700 p-2.5 rounded-xl text-center cursor-pointer">
+                    <div data-color="multi" class="option-card bg-slate-900/60 border border-white/10 p-2.5 rounded-xl text-center cursor-pointer">
                         <span class="block font-bold text-xs text-slate-200">Multiple Colors</span>
-                        <span class="block text-[9px] text-slate-400">Assorted bright palette</span>
+                        <span class="block text-[9px] text-slate-300">Assorted bright palette</span>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-black/40 rounded-2xl p-3 text-left text-[11px] text-slate-200 space-y-1.5 mb-4 border border-white/5">
+            <!-- Start Button moved up here -->
+            <button id="start-btn" class="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-90 active:scale-95 text-slate-950 font-black rounded-2xl shadow-lg transition-all text-sm tracking-wide flex items-center justify-center space-x-2 mb-4">
+                <i class="fa-solid fa-play"></i>
+                <span>START GAME</span>
+            </button>
+
+            <!-- Rules of Play Box moved below button -->
+            <div class="bg-black/40 rounded-2xl p-3 text-left text-[11px] text-slate-200 space-y-1.5 border border-white/10">
                 <div class="flex items-start space-x-2">
                     <i class="fa-solid fa-circle-check text-cyan-400 mt-0.5"></i>
                     <p><strong>Rule:</strong> Tap top-most free straws without moving others.</p>
@@ -134,10 +136,6 @@
                 </div>
             </div>
 
-            <button id="start-btn" class="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-90 active:scale-95 text-slate-950 font-black rounded-2xl shadow-lg transition-all text-sm tracking-wide flex items-center justify-center space-x-2">
-                <i class="fa-solid fa-play"></i>
-                <span>START GAME</span>
-            </button>
         </div>
     </div>
 
@@ -308,12 +306,12 @@
         function generateItems() {
             items = [];
             let idCounter = 0;
-            const margin = 20; // Reduced margin to expand play area safely below header and above bottom edge
+            const margin = 20;
             const w = canvas.width;
             const h = canvas.height;
             const centerX = w / 2;
             const centerY = h / 2;
-            const lengthRange = [Math.min(w, h) * 0.60, Math.min(w, h) * 0.88]; // Increased length bounds to use more empty space
+            const lengthRange = [Math.min(w, h) * 0.60, Math.min(w, h) * 0.88];
             const strawWidth = WIDTH_MAP[settings.widthChoice] || 14;
 
             let chosenColor = SINGLE_TONES[Math.floor(Math.random() * SINGLE_TONES.length)];
