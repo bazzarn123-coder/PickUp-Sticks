@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pick-up Sticks Mobile Game</title>
+    <link rel="icon" type="image/jpeg" href="sticks.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+            background-color: #0b1120;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(-8px, 4px); }
+            40% { transform: translate(6px, -6px); }
+            60% { transform: translate(-5px, -3px); }
+            80% { transform: translate(4px, 5px); }
+        }
+        .screen-shake {
+            animation: shake 0.35s ease-in-out;
+        }
+        .table-texture {
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 70%, #020617 100%);
+        }
+        .option-card {
+            transition: all 0.2s ease;
+        }
+        .option-card.selected {
+            border-color: #38bdf8;
+            background-color: rgba(56, 189, 248, 0.2);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="table-texture w-screen h-[100dvh] flex flex-col justify-between overflow-hidden text-white">
+
+    <header class="absolute top-0 left-0 w-full px-3 py-2.5 bg-black/60 backdrop-blur-md border-b border-white/10 flex justify-between items-center z-20 pointer-events-auto">
+        <div class="flex items-center space-x-2">
+            <!-- Menu / Home Button -->
+            <button id="top-menu-btn" class="bg-slate-800/90 hover:bg-slate-700 active:scale-95 border border-slate-600 px-3 py-1.5 rounded-full flex items-center space-x-1.5 shadow-md text-xs font-bold text-cyan-300">
+                <i class="fa-solid fa-bars text-[11px]"></i>
+                <span>Menu</span>
+            </button>
+            <div class="bg-cyan-500/20 border border-cyan-400/40 px-2.5 py-1.5 rounded-full flex items-center space-x-1 shadow-md">
+                <i class="fa-solid fa-star text-cyan-400 text-xs"></i>
+                <span id="score-val" class="font-black text-xs text-cyan-200 ml-1">0</span>
+            </div>
+        </div>
+
+        <!-- Mistakes (3 max) -->
+        <div class="flex items-center space-x-1 bg-black/50 px-2.5 py-1.5 rounded-full border border-red-500/30">
+            <span class="text-[11px] font-semibold text-red-300 mr-0.5">Lives:</span>
+            <div id="strikes-container" class="flex space-x-1">
+                <i class="fa-solid fa-heart text-red-500 text-xs"></i>
+                <i class="fa-solid fa-heart text-red-500 text-xs"></i>
+                <i class="fa-solid fa-heart text-red-500 text-xs"></i>
+            </div>
+        </div>
+
+        <!-- Straws Left -->
+        <div class="flex items-center space-x-1 bg-slate-800/80 border border-slate-700 px-2.5 py-1.5 rounded-full">
+            <i class="fa-solid fa-grip-lines text-cyan-400 text-[11px]"></i>
+            <span id="straws-left-val" class="font-black text-xs text-slate-100">0</span>
+        </div>
+    </header>
+
+    <main id="canvas-container" class="relative w-full h-full overflow-hidden">
+        <canvas id="gameCanvas" class="absolute inset-0 w-full h-full block cursor-pointer"></canvas>
+        <div id="floating-text-container" class="absolute inset-0 pointer-events-none overflow-hidden z-10"></div>
+    </main>
+
+    <!-- Start Screen with sticks.jpg Splash Background -->
+    <div id="start-screen" class="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 text-center overflow-y-auto" style="background: url('sticks.jpg'); background-size: cover; background-position: center;">
+        <div class="bg-slate-900/85 backdrop-blur-md p-5 rounded-3xl border border-cyan-500/30 shadow-2xl max-w-sm w-full my-auto">
+            <div class="w-14 h-14 bg-cyan-500/20 rounded-2xl mx-auto flex items-center justify-center mb-3 border border-cyan-400/40 shadow-inner">
+                <i class="fa-solid fa-wand-magic-sparkles text-2xl text-cyan-300"></i>
+            </div>
+            <h1 class="text-xl font-black text-cyan-100 tracking-wider mb-0.5">PICK-UP STICKS</h1>
+            <p class="text-[11px] text-cyan-300/80 mb-4 uppercase tracking-widest font-semibold">Custom Game Settings</p>
+            
+            <!-- Straw Width Selection (1, 2, 3) -->
+            <div class="text-left mb-3">
+                <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wide block mb-1.5">Straw Width Size</label>
+                <div class="grid grid-cols-3 gap-2" id="width-selector">
+                    <div data-width="1" class="option-card selected bg-slate-800/90 border border-slate-700 py-2.5 px-2 rounded-xl text-center cursor-pointer">
+                        <span class="block font-black text-xs text-cyan-300">1</span>
+                        <span class="block text-[9px] text-slate-400">Thin</span>
+                    </div>
+                    <div data-width="2" class="option-card bg-slate-800/90 border border-slate-700 py-2.5 px-2 rounded-xl text-center cursor-pointer">
+                        <span class="block font-black text-xs text-slate-200">2</span>
+                        <span class="block text-[9px] text-slate-400">Medium</span>
+                    </div>
+                    <div data-width="3" class="option-card bg-slate-800/90 border border-slate-700 py-2.5 px-2 rounded-xl text-center cursor-pointer">
+                        <span class="block font-black text-xs text-slate-200">3</span>
+                        <span class="block text-[9px] text-slate-400">Wide</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Straw Color Mode Selection -->
+            <div class="text-left mb-4">
+                <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wide block mb-1.5">Straw Color Scheme</label>
+                <div class="grid grid-cols-2 gap-2" id="color-selector">
+                    <div data-color="same" class="option-card selected bg-slate-800/90 border border-slate-700 p-2.5 rounded-xl text-center cursor-pointer">
+                        <span class="block font-bold text-xs text-cyan-300">All Same Color</span>
+                        <span class="block text-[9px] text-slate-400">Single tone pile</span>
+                    </div>
+                    <div data-color="multi" class="option-card bg-slate-800/90 border border-slate-700 p-2.5 rounded-xl text-center cursor-pointer">
+                        <span class="block font-bold text-xs text-slate-200">Multiple Colors</span>
+                        <span class="block text-[9px] text-slate-400">Assorted bright palette</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-black/40 rounded-2xl p-3 text-left text-[11px] text-slate-200 space-y-1.5 mb-4 border border-white/5">
+                <div class="flex items-start space-x-2">
+                    <i class="fa-solid fa-circle-check text-cyan-400 mt-0.5"></i>
+                    <p><strong>Rule:</strong> Tap top-most free straws without moving others.</p>
+                </div>
+                <div class="flex items-start space-x-2">
+                    <i class="fa-solid fa-triangle-exclamation text-red-400 mt-0.5"></i>
+                    <p><strong>3 Mistakes Max:</strong> Tapping blocked straws costs 1 life.</p>
+                </div>
+            </div>
+
+            <button id="start-btn" class="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-90 active:scale-95 text-slate-950 font-black rounded-2xl shadow-lg transition-all text-sm tracking-wide flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-play"></i>
+                <span>START GAME</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="gameover-screen" class="absolute inset-0 bg-black/90 backdrop-blur-lg z-30 flex flex-col items-center justify-center p-6 text-center hidden">
+        <div class="bg-gradient-to-b from-red-950/90 to-slate-900 p-6 rounded-3xl border border-red-500/30 shadow-2xl max-w-xs w-full">
+            <div class="w-16 h-16 bg-red-600/20 rounded-2xl mx-auto flex items-center justify-center mb-4 border border-red-500/30">
+                <i class="fa-solid fa-skull text-3xl text-red-400"></i>
+            </div>
+            <h2 class="text-2xl font-black text-red-200 mb-1">GAME OVER</h2>
+            <p class="text-xs text-red-300/70 mb-6">3 mistakes reached! The pile collapsed.</p>
+            
+            <div class="bg-black/40 rounded-2xl p-4 mb-6 border border-white/5 space-y-2">
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-400">Final Score:</span>
+                    <span id="go-score" class="font-bold text-cyan-300">0</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-400">High Score:</span>
+                    <span id="go-highscore" class="font-bold text-cyan-400">0</span>
+                </div>
+            </div>
+
+            <div class="space-y-2.5">
+                <button id="restart-btn" class="w-full py-3.5 bg-gradient-to-r from-red-600 to-cyan-600 hover:opacity-90 active:scale-95 text-white font-black rounded-2xl shadow-lg transition-all text-sm tracking-wide flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>PLAY AGAIN</span>
+                </button>
+                <button id="menu-go-btn" class="w-full py-3 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 font-bold rounded-2xl transition-all text-xs tracking-wide">
+                    MAIN MENU
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="victory-screen" class="absolute inset-0 bg-black/90 backdrop-blur-lg z-30 flex flex-col items-center justify-center p-6 text-center hidden">
+        <div class="bg-gradient-to-b from-cyan-950/90 to-slate-900 p-6 rounded-3xl border border-cyan-400/40 shadow-2xl max-w-xs w-full">
+            <div class="w-16 h-16 bg-cyan-500/20 rounded-2xl mx-auto flex items-center justify-center mb-4 border border-cyan-400/30">
+                <i class="fa-solid fa-trophy text-3xl text-cyan-300"></i>
+            </div>
+            <h2 class="text-2xl font-black text-cyan-200 mb-1">PILE CLEARED!</h2>
+            <p class="text-xs text-cyan-300/70 mb-6">Flawless technique! Proceeding to next pile...</p>
+            
+            <button id="next-level-btn" class="w-full py-4 bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-90 active:scale-95 text-slate-950 font-black rounded-2xl shadow-lg transition-all text-base tracking-wide flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-forward"></i>
+                <span>NEXT LEVEL</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+            }
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+            playPickup(points) {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                const baseFreq = 480 + (points * 50);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(baseFreq, now);
+                osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, now + 0.15);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            }
+            playError() {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(130, now);
+                osc.frequency.setValueAtTime(85, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+            playGameOver() {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                [260, 200, 150, 90].forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(freq, now + (idx * 0.12));
+                    gain.gain.setValueAtTime(0.3, now + (idx * 0.12));
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + (idx * 0.12) + 0.2);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + (idx * 0.12));
+                    osc.stop(now + (idx * 0.12) + 0.2);
+                });
+            }
+        }
+
+        const sounds = new SoundEngine();
+
+        let settings = {
+            widthChoice: 1,
+            colorMode: 'same'
+        };
+
+        const WIDTH_MAP = {
+            1: 8,
+            2: 14,
+            3: 22
+        };
+
+        const PALETTE = [
+            { name: 'Red', color: '#ef4444', points: 1 },
+            { name: 'Blue', color: '#3b82f6', points: 2 },
+            { name: 'Green', color: '#22c55e', points: 3 },
+            { name: 'Yellow', color: '#eab308', points: 5 },
+            { name: 'Orange', color: '#f97316', points: 8 },
+            { name: 'Pink', color: '#ec4899', points: 10 }
+        ];
+
+        const SINGLE_TONES = ['#38bdf8', '#34d399', '#f472b6', '#facc15', '#a78bfa', '#fb923c'];
+
+        let canvas, ctx;
+        let items = [];
+        let score = 0;
+        let penalties = 0;
+        let level = 1;
+        let collectedCount = 0;
+        let totalItems = 0;
+        let gameState = 'SPLASH';
+        let highScore = localStorage.getItem('straws_game_highscore') || 0;
+        let particles = [];
+
+        function lineIntersection(p1, p2, p3, p4) {
+            const denom = (p4.y - p3.y) * (p2.x - p1.x) - (p4.x - p3.x) * (p2.y - p1.y);
+            if (denom === 0) return false;
+            const ua = ((p4.x - p3.x) * (p1.y - p3.y) - (p4.y - p3.y) * (p1.x - p3.x)) / denom;
+            const ub = ((p2.x - p1.x) * (p1.y - p3.y) - (p2.y - p1.y) * (p1.x - p3.x)) / denom;
+            return (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1);
+        }
+
+        function distToSegmentSquared(p, a, b) {
+            const l2 = (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y);
+            if (l2 === 0) return (p.x - a.x) * (p.x - a.x) + (p.y - a.y) * (p.y - a.y);
+            let t = ((p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y)) / l2;
+            t = Math.max(0, Math.min(1, t));
+            return (p.x - (a.x + t * (b.x - a.x))) * (p.x - (a.x + t * (b.x - a.x))) +
+                   (p.y - (a.y + t * (b.y - a.y))) * (p.y - (a.y + t * (b.y - a.y)));
+        }
+
+        function generateItems() {
+            items = [];
+            let idCounter = 0;
+            const margin = 20; // Reduced margin to expand play area safely below header and above bottom edge
+            const w = canvas.width;
+            const h = canvas.height;
+            const centerX = w / 2;
+            const centerY = h / 2;
+            const lengthRange = [Math.min(w, h) * 0.60, Math.min(w, h) * 0.88]; // Increased length bounds to use more empty space
+            const strawWidth = WIDTH_MAP[settings.widthChoice] || 14;
+
+            let chosenColor = SINGLE_TONES[Math.floor(Math.random() * SINGLE_TONES.length)];
+            const totalCount = 22 + (level * 3);
+
+            for (let i = 0; i < totalCount; i++) {
+                let valid = false;
+                let x1, y1, x2, y2, angle, length;
+                let attempts = 0;
+                
+                while (!valid && attempts < 100) {
+                    attempts++;
+                    angle = Math.random() * Math.PI;
+                    length = lengthRange[0] + Math.random() * (lengthRange[1] - lengthRange[0]);
+                    
+                    const r = Math.random() * (Math.min(w, h) * 0.32);
+                    const a = Math.random() * Math.PI * 2;
+                    const cx = centerX + Math.cos(a) * r;
+                    const cy = centerY + Math.sin(a) * r;
+                    
+                    x1 = cx - Math.cos(angle) * (length / 2);
+                    y1 = cy - Math.sin(angle) * (length / 2);
+                    x2 = cx + Math.cos(angle) * (length / 2);
+                    y2 = cy + Math.sin(angle) * (length / 2);
+                    
+                    if (x1 >= margin && x1 <= w - margin && x2 >= margin && x2 <= w - margin &&
+                        y1 >= margin + 50 && y1 <= h - margin - 20 && y2 >= margin + 50 && y2 <= h - margin - 20) {
+                        valid = true;
+                    }
+                }
+
+                if (!valid) {
+                    angle = Math.random() * Math.PI;
+                    length = 220;
+                    x1 = centerX - 110; y1 = centerY;
+                    x2 = centerX + 110; y2 = centerY;
+                }
+
+                let colorConfig;
+                if (settings.colorMode === 'same') {
+                    colorConfig = { color: chosenColor, points: 2 };
+                } else {
+                    const paletteItem = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+                    colorConfig = { color: paletteItem.color, points: paletteItem.points };
+                }
+
+                items.push({
+                    id: idCounter++,
+                    x1, y1, x2, y2,
+                    width: strawWidth,
+                    color: colorConfig.color,
+                    points: colorConfig.points,
+                    collected: false
+                });
+            }
+
+            totalItems = items.length;
+        }
+
+        function isBlocked(item) {
+            for (let other of items) {
+                if (!other.collected && other.id > item.id) {
+                    if (lineIntersection(
+                        {x: item.x1, y: item.y1}, {x: item.x2, y: item.y2},
+                        {x: other.x1, y: other.y1}, {x: other.x2, y: other.y2}
+                    )) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function spawnParticles(x, y, color) {
+            for (let i = 0; i < 14; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 2 + Math.random() * 4;
+                particles.push({
+                    x, y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: 2 + Math.random() * 2.5,
+                    color,
+                    alpha: 1,
+                    decay: 0.025 + Math.random() * 0.03
+                });
+            }
+        }
+
+        function showFloatingText(text, x, y, isError = false) {
+            const container = document.getElementById('floating-text-container');
+            const el = document.createElement('div');
+            el.className = `absolute font-black text-sm md:text-base pointer-events-none transition-all duration-700 ease-out transform -translate-x-1/2 -translate-y-1/2 ${isError ? 'text-red-400 scale-125' : 'text-cyan-300 scale-110'}`;
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+            el.innerText = text;
+            container.appendChild(el);
+
+            setTimeout(() => {
+                el.style.transform = `translate(-50%, -50px) scale(1)`;
+                el.style.opacity = '0';
+            }, 20);
+
+            setTimeout(() => {
+                if (container.contains(el)) container.removeChild(el);
+            }, 750);
+        }
+
+        function triggerScreenShake() {
+            const container = document.getElementById('canvas-container');
+            container.classList.add('screen-shake');
+            setTimeout(() => {
+                container.classList.remove('screen-shake');
+            }, 350);
+        }
+
+        function initCanvas() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            canvas.addEventListener('pointerdown', handleCanvasTap);
+        }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            if (items.length === 0 && gameState === 'PLAYING') {
+                generateItems();
+            }
+        }
+
+        function updateHUD() {
+            document.getElementById('score-val').innerText = score;
+            document.getElementById('straws-left-val').innerText = totalItems - collectedCount;
+            
+            const strikeContainer = document.getElementById('strikes-container');
+            let heartsHtml = '';
+            for (let i = 0; i < 3; i++) {
+                if (i < penalties) {
+                    heartsHtml += `<i class="fa-solid fa-heart-crack text-neutral-600 text-xs"></i>`;
+                } else {
+                    heartsHtml += `<i class="fa-solid fa-heart text-red-500 text-xs"></i>`;
+                }
+            }
+            strikeContainer.innerHTML = heartsHtml;
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 60, canvas.width/2, canvas.height/2, Math.max(canvas.width, canvas.height)*0.8);
+            grad.addColorStop(0, '#1e293b');
+            grad.addColorStop(1, '#090d16');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            items.forEach(item => {
+                if (item.collected) return;
+
+                ctx.save();
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                ctx.shadowBlur = 8;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 4;
+
+                const dx = item.x2 - item.x1;
+                const dy = item.y2 - item.y1;
+                const length = Math.hypot(dx, dy);
+                const angle = Math.atan2(dy, dx);
+
+                ctx.translate(item.x1, item.y1);
+                ctx.rotate(angle);
+
+                ctx.fillStyle = item.color;
+                ctx.beginPath();
+                ctx.roundRect(0, -item.width / 2, length, item.width, item.width / 2);
+                ctx.fill();
+
+                const cylGrad = ctx.createLinearGradient(0, -item.width/2, 0, item.width/2);
+                cylGrad.addColorStop(0, 'rgba(255, 255, 255, 0.55)');
+                cylGrad.addColorStop(0.3, 'rgba(255, 255, 255, 0.15)');
+                cylGrad.addColorStop(0.7, 'rgba(0, 0, 0, 0.15)');
+                cylGrad.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
+
+                ctx.fillStyle = cylGrad;
+                ctx.beginPath();
+                ctx.roundRect(0, -item.width / 2, length, item.width, item.width / 2);
+                ctx.fill();
+
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, item.width * 0.22, item.width / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.ellipse(length, 0, item.width * 0.22, item.width / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+            });
+
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= p.decay;
+
+                if (p.alpha <= 0) {
+                    particles.splice(index, 1);
+                    return;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            if (gameState === 'PLAYING') {
+                requestAnimationFrame(render);
+            }
+        }
+
+        function handleCanvasTap(e) {
+            if (gameState !== 'PLAYING') return;
+
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX;
+            const clientY = e.clientY;
+            
+            if (clientX === undefined || clientY === undefined) return;
+
+            const tapX = clientX - rect.left;
+            const tapY = clientY - rect.top;
+
+            const thresholdSquared = 18 * 18;
+            let touchedItems = [];
+
+            items.forEach(item => {
+                if (!item.collected) {
+                    const distSq = distToSegmentSquared({x: tapX, y: tapY}, {x: item.x1, y: item.y1}, {x: item.x2, y: item.y2});
+                    if (distSq <= thresholdSquared) {
+                        touchedItems.push(item);
+                    }
+                }
+            });
+
+            if (touchedItems.length === 0) return;
+
+            touchedItems.sort((a, b) => b.id - a.id);
+            const targetItem = touchedItems[0];
+            const blocked = isBlocked(targetItem);
+
+            if (!blocked) {
+                targetItem.collected = true;
+                score += targetItem.points * level;
+                collectedCount++;
+                
+                sounds.playPickup(targetItem.points);
+                spawnParticles(tapX, tapY, targetItem.color);
+                showFloatingText(`+${targetItem.points * level}`, tapX, tapY, false);
+                
+                updateHUD();
+
+                if (collectedCount >= totalItems) {
+                    triggerVictory();
+                }
+            } else {
+                penalties++;
+                sounds.playError();
+                triggerScreenShake();
+                showFloatingText(`BLOCKED! (-1)`, tapX, tapY, true);
+                
+                updateHUD();
+
+                if (penalties >= 3) {
+                    triggerGameOver();
+                }
+            }
+        }
+
+        function startGame() {
+            score = 0;
+            penalties = 0;
+            level = 1;
+            collectedCount = 0;
+            particles = [];
+            generateItems();
+            updateHUD();
+
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('gameover-screen').classList.add('hidden');
+            document.getElementById('victory-screen').classList.add('hidden');
+            
+            gameState = 'PLAYING';
+            requestAnimationFrame(render);
+        }
+
+        function returnToMenu() {
+            gameState = 'SPLASH';
+            document.getElementById('start-screen').classList.remove('hidden');
+            document.getElementById('gameover-screen').classList.add('hidden');
+            document.getElementById('victory-screen').classList.add('hidden');
+        }
+
+        function nextLevel() {
+            level++;
+            penalties = 0;
+            collectedCount = 0;
+            particles = [];
+            generateItems();
+            updateHUD();
+
+            document.getElementById('victory-screen').classList.add('hidden');
+            gameState = 'PLAYING';
+            requestAnimationFrame(render);
+        }
+
+        function triggerGameOver() {
+            gameState = 'GAMEOVER';
+            sounds.playGameOver();
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('straws_game_highscore', highScore);
+            }
+
+            document.getElementById('go-score').innerText = score;
+            document.getElementById('go-highscore').innerText = highScore;
+            document.getElementById('gameover-screen').classList.remove('hidden');
+        }
+
+        function triggerVictory() {
+            gameState = 'VICTORY';
+            document.getElementById('victory-screen').classList.remove('hidden');
+        }
+
+        document.querySelectorAll('#width-selector > div').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('#width-selector > div').forEach(c => {
+                    c.classList.remove('selected');
+                    c.querySelector('span:first-child').className = 'block font-black text-xs text-slate-200';
+                });
+                card.classList.add('selected');
+                card.querySelector('span:first-child').className = 'block font-black text-xs text-cyan-300';
+                settings.widthChoice = parseInt(card.getAttribute('data-width'));
+            });
+        });
+
+        document.querySelectorAll('#color-selector > div').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('#color-selector > div').forEach(c => {
+                    c.classList.remove('selected');
+                    c.querySelector('span:first-child').className = 'block font-bold text-xs text-slate-200';
+                });
+                card.classList.add('selected');
+                card.querySelector('span:first-child').className = 'block font-bold text-xs text-cyan-300';
+                settings.colorMode = card.getAttribute('data-color');
+            });
+        });
+
+        document.getElementById('start-btn').addEventListener('click', startGame);
+        document.getElementById('restart-btn').addEventListener('click', startGame);
+        document.getElementById('next-level-btn').addEventListener('click', nextLevel);
+        document.getElementById('top-menu-btn').addEventListener('click', returnToMenu);
+        document.getElementById('menu-go-btn').addEventListener('click', returnToMenu);
+
+        window.onload = function() {
+            initCanvas();
+            updateHUD();
+            render();
+        };
+    </script>
+</body>
+</html>
