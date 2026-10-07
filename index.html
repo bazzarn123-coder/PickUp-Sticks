@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pick-up Sticks Mobile Game</title>
     <!-- Bulletproof Base64 SVG Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMwZjE3MmEiLz48bGluZSB4MT0iMTIiIHkxPSIyMCIgeDI9IjUyIiB5Mj0iNDQiIHN0cm9rZT0iI2VmNDQ0NCIgc3Ryb2tlLXdpZHRoPSI3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bGluZSB4MT0iMTYiIHkxPSI0OCIgeDI9IjQ4IiB5Mj0iMTYiIHN0cm9rZT0iIzM4YmRmOCIgc3Ryb2tlLXdpZHRoPSI3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bGluZSB4MT0iMTAiIHkxPSIzNCIgeDI9IjU0IiB5Mj0iMzQiIHN0cm9rZT0iIzIyYzU1ZSIgc3Ryb2tlLXdpZHRoPSI3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMwZjF3MmEiLz48bGluZSB4MT0iMTIiIHkxPSIyMCIgeDI9IjUyIiB5Mj0iNDQiIHN0cm9rZT0iI2VmNDQ0NCIgc3Ryb2tlLXdpZHRoPSI3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bGluZSB4MT0iMTYiIHkxPSI0OCIgeDI9IjQ4IiB5Mj0iMTYiIHN0cm9rZT0iIzM4YmRmOCIgc3Ryb2tlLXdpZHRoPSI3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bGluZSB4MT0iMTAiIHkxPSIzNCIgeDI9IjU0IiB5Mj0iMzQiIHN0cm9rZT0iIzIyYzU1ZSIgc3Ryb2tlLXdpZHRoPSI3IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -65,10 +65,15 @@
             <span id="timer-val" class="font-black text-xs text-cyan-200">0.0s</span>
         </div>
 
-        <!-- Straws Left -->
-        <div class="flex items-center space-x-1 bg-slate-800/80 border border-slate-700 px-2.5 py-1.5 rounded-full">
-            <i class="fa-solid fa-grip-lines text-cyan-400 text-[11px]"></i>
-            <span id="straws-left-val" class="font-black text-xs text-slate-100">0</span>
+        <!-- Header Right: Straws Left & Pause Button -->
+        <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-1 bg-slate-800/80 border border-slate-700 px-2.5 py-1.5 rounded-full">
+                <i class="fa-solid fa-grip-lines text-cyan-400 text-[11px]"></i>
+                <span id="straws-left-val" class="font-black text-xs text-slate-100">0</span>
+            </div>
+            <button id="pause-btn" class="bg-slate-800/90 hover:bg-slate-700 active:scale-95 border border-slate-600 w-8 h-8 rounded-full flex items-center justify-center shadow-md text-cyan-300">
+                <i class="fa-solid fa-pause text-xs"></i>
+            </button>
         </div>
     </header>
 
@@ -88,7 +93,7 @@
         <div id="floating-text-container" class="absolute inset-0 pointer-events-none overflow-hidden z-10"></div>
     </main>
 
-    <!-- Start Screen with sticks.jpg Splash Background[span_2](start_span)[span_2](end_span) -->
+    <!-- Start Screen with sticks.jpg Splash Background[span_4](start_span)[span_4](end_span) -->
     <div id="start-screen" class="absolute inset-0 z-30 flex flex-col items-center justify-end p-4 pb-8 text-center overflow-y-auto" style="background: url('sticks.jpg'); background-size: cover; background-position: center;">
         <div class="bg-black/30 backdrop-blur-sm p-5 rounded-3xl border border-white/15 shadow-2xl max-w-sm w-full">
             
@@ -126,11 +131,17 @@
                 </div>
             </div>
 
-            <!-- Start Button -->
-            <button id="start-btn" class="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-90 active:scale-95 text-slate-950 font-black rounded-2xl shadow-lg transition-all text-sm tracking-wide flex items-center justify-center space-x-2 mb-4">
-                <i class="fa-solid fa-play"></i>
-                <span>START GAME</span>
-            </button>
+            <!-- Action Buttons -->
+            <div class="space-y-2 mb-4">
+                <button id="start-btn" class="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-90 active:scale-95 text-slate-950 font-black rounded-2xl shadow-lg transition-all text-sm tracking-wide flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-play"></i>
+                    <span>START GAME</span>
+                </button>
+                <button id="level-select-btn" class="w-full py-2.5 bg-slate-800/90 hover:bg-slate-700 active:scale-95 border border-slate-600 text-cyan-300 font-bold rounded-2xl transition-all text-xs tracking-wide flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-list-ol"></i>
+                    <span>LEVEL SELECT</span>
+                </button>
+            </div>
 
             <!-- Rules of Play Box -->
             <div class="bg-black/40 rounded-2xl p-3 text-left text-[11px] text-slate-200 space-y-1.5 border border-white/10">
@@ -140,19 +151,60 @@
                 </div>
                 <div class="flex items-start space-x-2">
                     <i class="fa-solid fa-stopwatch text-yellow-400 mt-0.5"></i>
-                    <p><strong>Time Penalty:</strong> Wrong taps add <strong>+1s</strong> to timer.</p>
+                    <p><strong>Timer & Stars:</strong> Starts on first pick. Finish &lt;20s for 3 stars, &lt;30s for 2 stars!</p>
                 </div>
             </div>
 
         </div>
     </div>
 
+    <!-- Level Select Screen -->
+    <div id="levelselect-screen" class="absolute inset-0 bg-black/90 backdrop-blur-lg z-30 flex flex-col items-center justify-center p-6 text-center hidden">
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 p-6 rounded-3xl border border-cyan-400/30 shadow-2xl max-w-sm w-full flex flex-col max-h-[85vh]">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-black text-cyan-200">SELECT LEVEL</h2>
+                <button id="close-levelselect-btn" class="text-slate-400 hover:text-white px-2 py-1 text-sm font-bold">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div id="level-grid" class="grid grid-cols-4 gap-2.5 overflow-y-auto p-1 flex-grow mb-4">
+                <!-- Dynamically populated level buttons -->
+            </div>
+
+            <p class="text-[10px] text-slate-400">Clear levels to unlock higher challenges!</p>
+        </div>
+    </div>
+
+    <!-- Pause Screen Overlay -->
+    <div id="pause-screen" class="absolute inset-0 bg-black/80 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center hidden">
+        <div class="bg-slate-900 p-6 rounded-3xl border border-cyan-500/30 shadow-2xl max-w-xs w-full space-y-3">
+            <div class="w-14 h-14 bg-cyan-500/20 rounded-2xl mx-auto flex items-center justify-center mb-2 border border-cyan-400/30">
+                <i class="fa-solid fa-pause text-2xl text-cyan-300"></i>
+            </div>
+            <h2 class="text-xl font-black text-cyan-200 mb-4">GAME PAUSED</h2>
+
+            <button id="resume-btn" class="w-full py-3 bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-90 active:scale-95 text-slate-950 font-black rounded-2xl shadow-lg transition-all text-xs tracking-wide flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-play"></i>
+                <span>RESUME</span>
+            </button>
+            <button id="pause-restart-btn" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 font-bold rounded-2xl transition-all text-xs tracking-wide flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>RESTART LEVEL</span>
+            </button>
+            <button id="pause-menu-btn" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-400 font-bold rounded-2xl transition-all text-xs tracking-wide">
+                MAIN MENU
+            </button>
+        </div>
+    </div>
+
+    <!-- Victory Screen -->
     <div id="victory-screen" class="absolute inset-0 bg-black/90 backdrop-blur-lg z-30 flex flex-col items-center justify-center p-6 text-center hidden">
         <div class="bg-gradient-to-b from-cyan-950/90 to-slate-900 p-6 rounded-3xl border border-cyan-400/40 shadow-2xl max-w-xs w-full">
             <div class="w-16 h-16 bg-cyan-500/20 rounded-2xl mx-auto flex items-center justify-center mb-3 border border-cyan-400/30">
                 <i class="fa-solid fa-trophy text-3xl text-cyan-300"></i>
             </div>
-            <h2 class="text-2xl font-black text-cyan-200 mb-1">PILE CLEARED!</h2>
+            <h2 class="text-2xl font-black text-cyan-200 mb-1">LEVEL <span id="victory-level-num">1</span> CLEARED!</h2>
             
             <!-- Stars Container -->
             <div id="victory-stars" class="flex justify-center space-x-2 text-2xl my-3 text-yellow-400">
@@ -170,10 +222,15 @@
                 </div>
             </div>
 
-            <button id="next-level-btn" class="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-90 active:scale-95 text-slate-950 font-black rounded-2xl shadow-lg transition-all text-sm tracking-wide flex items-center justify-center space-x-2">
-                <i class="fa-solid fa-forward"></i>
-                <span>NEXT LEVEL</span>
-            </button>
+            <div class="space-y-2">
+                <button id="next-level-btn" class="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-90 active:scale-95 text-slate-950 font-black rounded-2xl shadow-lg transition-all text-sm tracking-wide flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-forward"></i>
+                    <span>NEXT LEVEL</span>
+                </button>
+                <button id="victory-menu-btn" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 font-bold rounded-2xl transition-all text-xs tracking-wide">
+                    MAIN MENU
+                </button>
+            </div>
         </div>
     </div>
 
@@ -269,14 +326,16 @@
         let level = 1;
         let collectedCount = 0;
         let totalItems = 0;
-        let gameState = 'SPLASH';
+        let gameState = 'SPLASH'; // SPLASH, PLAYING, PAUSED, VICTORY, LEVELSELECT
         let particles = [];
 
-        // Timer & XP State
+        // Timer, XP & Progression State
         let timerSeconds = 0;
+        let timerStarted = false;
         let timerInterval = null;
         let playerXp = parseInt(localStorage.getItem('straws_game_xp')) || 0;
         let playerLevel = parseInt(localStorage.getItem('straws_game_level')) || 1;
+        let maxUnlockedLevel = parseInt(localStorage.getItem('straws_max_unlocked_level')) || 1;
 
         function lineIntersection(p1, p2, p3, p4) {
             const denom = (p4.y - p3.y) * (p2.x - p1.x) - (p4.x - p3.x) * (p2.y - p1.y);
@@ -307,7 +366,7 @@
             const strawWidth = WIDTH_MAP[settings.widthChoice] || 14;
 
             let chosenColor = SINGLE_TONES[Math.floor(Math.random() * SINGLE_TONES.length)];
-            const totalCount = 22 + (level * 3);
+            const totalCount = 20 + (level * 2);
 
             for (let i = 0; i < totalCount; i++) {
                 let valid = false;
@@ -445,10 +504,8 @@
             document.getElementById('straws-left-val').innerText = totalItems - collectedCount;
             document.getElementById('timer-val').innerText = timerSeconds.toFixed(1) + 's';
 
-            // XP Bar Update
-            const xpForNextLevel = playerLevel * 100;
             const currentLevelXp = playerXp % 100;
-            document.getElementById('player-level-badge').innerText = `Lvl ${playerLevel}`;
+            document.getElementById('player-level-badge').innerText = `Lvl ${playerLevel} (P. ${level})`;
             document.getElementById('xp-bar-fill').style.width = `${currentLevelXp}%`;
             document.getElementById('xp-text').innerText = `${currentLevelXp}/100 XP`;
         }
@@ -562,6 +619,11 @@
             const blocked = isBlocked(targetItem);
 
             if (!blocked) {
+                // Start the timer on the first successful stick pickup
+                if (!timerStarted) {
+                    timerStarted = true;
+                }
+
                 targetItem.collected = true;
                 score += targetItem.points * level;
                 collectedCount++;
@@ -576,20 +638,23 @@
                     triggerVictory();
                 }
             } else {
-                // Wrong stick penalty: +1 second added to timer
-                timerSeconds += 1.0;
+                // Only add penalty if timer has already started
+                if (timerStarted) {
+                    timerSeconds += 1.0;
+                }
                 sounds.playError();
                 triggerScreenShake();
-                showFloatingText(`BLOCKED! (+1s)`, tapX, tapY, true);
+                showFloatingText(timerStarted ? `BLOCKED! (+1s)` : `BLOCKED!`, tapX, tapY, true);
                 
                 updateHUD();
             }
         }
 
-        function startGame() {
+        function startSpecificLevel(lvl) {
+            level = lvl;
             score = 0;
             timerSeconds = 0;
-            level = 1;
+            timerStarted = false;
             collectedCount = 0;
             particles = [];
             generateItems();
@@ -597,41 +662,51 @@
 
             document.getElementById('start-screen').classList.add('hidden');
             document.getElementById('victory-screen').classList.add('hidden');
+            document.getElementById('pause-screen').classList.add('hidden');
+            document.getElementById('levelselect-screen').classList.add('hidden');
             
             gameState = 'PLAYING';
             
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                if (gameState === 'PLAYING') {
+                if (gameState === 'PLAYING' && timerStarted) {
                     timerSeconds += 0.1;
                     updateHUD();
                 }
             }, 100);
 
             requestAnimationFrame(render);
+        }
+
+        function startGame() {
+            startSpecificLevel(1);
         }
 
         function returnToMenu() {
             gameState = 'SPLASH';
+            timerStarted = false;
             if (timerInterval) clearInterval(timerInterval);
             document.getElementById('start-screen').classList.remove('hidden');
             document.getElementById('victory-screen').classList.add('hidden');
+            document.getElementById('pause-screen').classList.add('hidden');
+            document.getElementById('levelselect-screen').classList.add('hidden');
         }
 
-        function nextLevel() {
-            level++;
-            collectedCount = 0;
-            particles = [];
-            timerSeconds = 0;
-            generateItems();
-            updateHUD();
+        function pauseGame() {
+            if (gameState !== 'PLAYING') return;
+            gameState = 'PAUSED';
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('pause-screen').classList.remove('hidden');
+        }
 
-            document.getElementById('victory-screen').classList.add('hidden');
+        function resumeGame() {
+            if (gameState !== 'PAUSED') return;
             gameState = 'PLAYING';
+            document.getElementById('pause-screen').classList.add('hidden');
             
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                if (gameState === 'PLAYING') {
+                if (gameState === 'PLAYING' && timerStarted) {
                     timerSeconds += 0.1;
                     updateHUD();
                 }
@@ -640,22 +715,60 @@
             requestAnimationFrame(render);
         }
 
+        function openLevelSelect() {
+            const grid = document.getElementById('level-grid');
+            grid.innerHTML = '';
+
+            const totalDisplayLevels = Math.max(maxUnlockedLevel + 2, 12);
+            for (let i = 1; i <= totalDisplayLevels; i++) {
+                const isUnlocked = i <= maxUnlockedLevel;
+                const btn = document.createElement('button');
+                btn.className = `py-3 rounded-xl font-black text-xs flex flex-col items-center justify-center transition-all ${isUnlocked ? 'bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 active:scale-95 cursor-pointer' : 'bg-slate-950/60 text-slate-600 border border-white/5 cursor-not-allowed'}`;
+                
+                if (isUnlocked) {
+                    btn.innerHTML = `<span>Level ${i}</span><span class="text-[9px] text-yellow-400 mt-0.5"><i class="fa-solid fa-star"></i> Unlocked</span>`;
+                    btn.addEventListener('click', () => {
+                        startSpecificLevel(i);
+                    });
+                } else {
+                    btn.innerHTML = `<span>Level ${i}</span><span class="text-[9px] text-slate-600 mt-0.5"><i class="fa-solid fa-lock"></i> Locked</span>`;
+                }
+                grid.appendChild(btn);
+            }
+
+            document.getElementById('levelselect-screen').classList.remove('hidden');
+        }
+
+        function closeLevelSelect() {
+            document.getElementById('levelselect-screen').classList.add('hidden');
+        }
+
+        function nextLevel() {
+            startSpecificLevel(level + 1);
+        }
+
         function triggerVictory() {
             gameState = 'VICTORY';
+            timerStarted = false;
             if (timerInterval) clearInterval(timerInterval);
             sounds.playVictory();
 
-            // Calculate Stars based on completion time
+            if (level >= maxUnlockedLevel) {
+                maxUnlockedLevel = level + 1;
+                localStorage.setItem('straws_max_unlocked_level', maxUnlockedLevel);
+            }
+
             let stars = 0;
             let xpGained = 30;
 
-            if (timerSeconds < 30) {
+            // Updated Star Thresholds (< 20s for 3 stars, < 30s for 2 stars)
+            if (timerSeconds < 20) {
                 stars = 3;
                 xpGained = 100;
-            } else if (timerSeconds < 45) {
+            } else if (timerSeconds < 30) {
                 stars = 2;
                 xpGained = 60;
-            } else if (timerSeconds <= 60) {
+            } else if (timerSeconds <= 45) {
                 stars = 1;
                 xpGained = 30;
             } else {
@@ -663,7 +776,6 @@
                 xpGained = 10;
             }
 
-            // Update XP & Level
             playerXp += xpGained;
             if (playerXp >= playerLevel * 100) {
                 playerLevel++;
@@ -671,7 +783,6 @@
             localStorage.setItem('straws_game_xp', playerXp);
             localStorage.setItem('straws_game_level', playerLevel);
 
-            // Render Stars UI
             const starsContainer = document.getElementById('victory-stars');
             let starsHtml = '';
             for (let i = 0; i < 3; i++) {
@@ -683,6 +794,7 @@
             }
             starsContainer.innerHTML = starsHtml;
 
+            document.getElementById('victory-level-num').innerText = level;
             document.getElementById('victory-time-text').innerText = `Completed in ${timerSeconds.toFixed(1)}s`;
             document.getElementById('victory-xp').innerText = `+${xpGained} XP`;
             document.getElementById('victory-screen').classList.remove('hidden');
@@ -714,8 +826,15 @@
         });
 
         document.getElementById('start-btn').addEventListener('click', startGame);
+        document.getElementById('level-select-btn').addEventListener('click', openLevelSelect);
+        document.getElementById('close-levelselect-btn').addEventListener('click', closeLevelSelect);
         document.getElementById('next-level-btn').addEventListener('click', nextLevel);
+        document.getElementById('victory-menu-btn').addEventListener('click', returnToMenu);
         document.getElementById('top-menu-btn').addEventListener('click', returnToMenu);
+        document.getElementById('pause-btn').addEventListener('click', pauseGame);
+        document.getElementById('resume-btn').addEventListener('click', resumeGame);
+        document.getElementById('pause-restart-btn').addEventListener('click', () => startSpecificLevel(level));
+        document.getElementById('pause-menu-btn').addEventListener('click', returnToMenu);
 
         window.onload = function() {
             initCanvas();
