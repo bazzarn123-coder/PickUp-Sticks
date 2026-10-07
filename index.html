@@ -80,7 +80,7 @@
         <div id="floating-text-container" class="absolute inset-0 pointer-events-none overflow-hidden z-10"></div>
     </main>
 
-    <!-- Start Screen with sticks.jpg Splash Background (shifted to bottom, start button moved up) -->
+    <!-- Start Screen with sticks.jpg Splash Background -->
     <div id="start-screen" class="absolute inset-0 z-30 flex flex-col items-center justify-end p-4 pb-8 text-center overflow-y-auto" style="background: url('sticks.jpg'); background-size: cover; background-position: center;">
         <div class="bg-black/30 backdrop-blur-sm p-5 rounded-3xl border border-white/15 shadow-2xl max-w-sm w-full">
             
@@ -118,13 +118,13 @@
                 </div>
             </div>
 
-            <!-- Start Button moved up here -->
+            <!-- Start Button -->
             <button id="start-btn" class="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-90 active:scale-95 text-slate-950 font-black rounded-2xl shadow-lg transition-all text-sm tracking-wide flex items-center justify-center space-x-2 mb-4">
                 <i class="fa-solid fa-play"></i>
                 <span>START GAME</span>
             </button>
 
-            <!-- Rules of Play Box moved below button -->
+            <!-- Rules of Play Box -->
             <div class="bg-black/40 rounded-2xl p-3 text-left text-[11px] text-slate-200 space-y-1.5 border border-white/10">
                 <div class="flex items-start space-x-2">
                     <i class="fa-solid fa-circle-check text-cyan-400 mt-0.5"></i>
@@ -345,9 +345,13 @@
 
                 if (!valid) {
                     angle = Math.random() * Math.PI;
-                    length = 220;
-                    x1 = centerX - 110; y1 = centerY;
-                    x2 = centerX + 110; y2 = centerY;
+                    length = 180 + Math.random() * 60;
+                    const ox = centerX + (Math.random() - 0.5) * 120;
+                    const oy = centerY + (Math.random() - 0.5) * 120;
+                    x1 = ox - Math.cos(angle) * (length / 2);
+                    y1 = oy - Math.sin(angle) * (length / 2);
+                    x2 = ox + Math.cos(angle) * (length / 2);
+                    y2 = oy + Math.sin(angle) * (length / 2);
                 }
 
                 let colorConfig;
@@ -678,19 +682,6 @@
 
         document.getElementById('start-btn').addEventListener('click', startGame);
         document.getElementById('restart-btn').addEventListener('click', startGame);
-        document.getElementById('next-level-btn').addEventListener('click', nextLevel);
-        document.getElementById('top-menu-btn').addEventListener('click', returnToMenu);
-        document.getElementById('menu-go-btn').addEventListener('click', returnToMenu);
-
-        window.onload = function() {
-            initCanvas();
-            updateHUD();
-            render();
-        };
-    </script>
-</body>
-</html>
-ventListener('click', startGame);
         document.getElementById('next-level-btn').addEventListener('click', nextLevel);
         document.getElementById('top-menu-btn').addEventListener('click', returnToMenu);
         document.getElementById('menu-go-btn').addEventListener('click', returnToMenu);
